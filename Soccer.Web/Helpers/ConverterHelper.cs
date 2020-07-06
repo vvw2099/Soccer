@@ -50,7 +50,7 @@ namespace Soccer.Web.Helpers
             };
         }
 
-        public async Task<GroupEntity> ToGroupEntityAsync(GroupViewModel model, string path, bool isNew)
+        public async Task<GroupEntity> ToGroupEntityAsync(GroupViewModel model, bool isNew)
         {
             return new GroupEntity
             {
@@ -72,6 +72,40 @@ namespace Soccer.Web.Helpers
                 Name = groupEntity.Name,
                 Tournament = groupEntity.Tournament,
                 TournamentId = groupEntity.Tournament.Id
+            };
+        }
+
+        public async Task<MatchEntity> ToMatchEntityAsync(MatchViewModel model, bool isNew)
+        {
+            return new MatchEntity
+            {
+                Date = model.Date.ToUniversalTime(),
+                GoalsLocal = model.GoalsLocal,
+                GoalsVisitor = model.GoalsVisitor,
+                Group = await _dataContext.Groups.FindAsync(model.GroupId),
+                Id = isNew ? 0 : model.Id,
+                IsClosed = model.IsClosed,
+                Local = await _dataContext.Teams.FindAsync(model.LocalId),
+                Visitor = await _dataContext.Teams.FindAsync(model.VisitorId)
+            };
+        }
+
+        public MatchViewModel ToMatchViewModel(MatchEntity matchEntity)
+        {
+            return new MatchViewModel
+            {
+                Date = matchEntity.Date.ToLocalTime(),
+                GoalsLocal = matchEntity.GoalsLocal,
+                GoalsVisitor = matchEntity.GoalsVisitor,
+                Group = matchEntity.Group,
+                GroupId = matchEntity.Group.Id,
+                Id = matchEntity.Id,
+                IsClosed = matchEntity.IsClosed,
+                Local = matchEntity.Local,
+                LocalId = matchEntity.Local.Id,
+                Teams = _combosHelper.GetComboTeams(matchEntity.Group.Id),
+                Visitor = matchEntity.Visitor,
+                VisitorId = matchEntity.Visitor.Id
             };
         }
 
