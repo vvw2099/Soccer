@@ -8,7 +8,7 @@ namespace Soccer.Web.Data.Entities
 
         public MatchEntity Match { get; set; }
 
-        //public UserEntity User { get; set; }
+        public UserEntity User { get; set; }
 
         [Display(Name = "Goals Local")]
         public int? GoalsLocal { get; set; }

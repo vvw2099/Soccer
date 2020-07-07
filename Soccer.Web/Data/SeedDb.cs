@@ -1,4 +1,7 @@
-﻿using Soccer.Web.Data.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Soccer.Common.Enums;
+using Soccer.Web.Data.Entities;
+using Soccer.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,17 +13,56 @@ namespace Soccer.Web.Data
     public class SeedDb
     {
         private readonly DataContext _dataContext;
+        private readonly IUserHelper _userHelper;
+        private Random _random;
 
-        public SeedDb(DataContext dataContext)
+        public SeedDb(DataContext dataContext, IUserHelper userHelper)
         {
             _dataContext = dataContext;
+            _userHelper = userHelper;
+            _random = new Random();
         }
 
         public async Task SeedAsync()
         {
             await _dataContext.Database.EnsureCreatedAsync();
+            await CheckRolesAsync();
             await CheckTeamsAsync();
             await CheckTournamentsAsync();
+            await CheckUserAsync("1010", "Enrique", "Gudiel", "vvw2099@hotmail.com", "350 634 2747", "Calle Luna Calle Sol", UserType.Admin);
+            await CheckUserAsync("1010", "Enrique", "Gudiel", "vvw2099@gmail.com", "350 634 2747", "Calle Luna Calle Sol", UserType.User);
+            
+            await CheckPreditionsAsync();
+        }
+
+        private async Task<UserEntity> CheckUserAsync(string document, string firstName, string lastName, string email, string phone, string address, UserType userType)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                user = new UserEntity
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    UserName = email,
+                    PhoneNumber = phone,
+                    Address = address,
+                    Document = document,
+                    Team = _dataContext.Teams.FirstOrDefault(),
+                    UserType=userType
+                };
+
+                await _userHelper.AddUserAsync(user, "123456");
+                await _userHelper.AddUserToRoleAsync(user, userType.ToString());
+            }
+            return user;
+        }
+
+        private async Task CheckRolesAsync()
+        {
+            await _userHelper.CheckRoleAsync(UserType.Admin.ToString());
+            await _userHelper.CheckRoleAsync(UserType.User.ToString());
         }
 
         private async Task CheckTeamsAsync()
@@ -595,6 +637,34 @@ namespace Soccer.Web.Data
                 });
 
                 await _dataContext.SaveChangesAsync();
+            }
+        }
+        private async Task CheckPreditionsAsync()
+        {
+            if (!_dataContext.Predictions.Any())
+            {
+                foreach (UserEntity user in _dataContext.Users)
+                {
+                    if (user.UserType == UserType.User)
+                    {
+                        AddPrediction(user);
+                    }
+                }
+
+                await _dataContext.SaveChangesAsync();
+            }
+        }
+        private void AddPrediction(UserEntity user)
+        {
+            foreach(MatchEntity match in _dataContext.Matches)
+            {
+                _dataContext.Predictions.Add(new PredictionEntity
+                {
+                    GoalsLocal = _random.Next(0, 5),
+                    GoalsVisitor=_random.Next(0,5),
+                    Match=match,
+                    User=user
+                });
             }
         }
     }
