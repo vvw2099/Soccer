@@ -9,9 +9,11 @@ using Soccer.Web.Data;
 using Soccer.Web.Data.Entities;
 using Soccer.Web.Helpers;
 using Soccer.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Soccer.Web.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class TeamsController : Controller
     {
         private readonly DataContext _context;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Soccer.Web.Data;
 using Soccer.Web.Data.Entities;
+using Soccer.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,21 @@ namespace Soccer.Web.Helpers
         public async Task<bool> IsUserInRoleAsync(UserEntity user, string roleName)
         {
             return await _userManager.IsInRoleAsync(user, roleName);
+        }
+
+        public async Task<SignInResult> LoginAsync(LoginViewModel model)
+        {
+            return await _signInManager.PasswordSignInAsync(
+                model.Username,
+                model.password,
+                model.RememberMe,
+                false
+                );
+        }
+
+        public async Task LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
         }
     }
 }
