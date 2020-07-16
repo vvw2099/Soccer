@@ -5,7 +5,9 @@
              x:Class="Soccer.Pris.App">
   <Application.Resources>
 
-    <!-- Application resource dictionary -->
+        <ResourceDictionary>
+            <x:String x:Key="UrlAPI">http://soccer.somee.com/</x:String>
+        </ResourceDictionary>
 
   </Application.Resources>
 </prism:PrismApplication>

@@ -34,13 +34,13 @@ namespace Soccer.Web.Data.Entities
         /*[Display(Name = "Picture")]
         public string PictureFullPath => string.IsNullOrEmpty(PicturePath)
             ? "https://SoccerWeb0.azurewebsites.net//images/noimage.png"
-            : $"https://zulusoccer.blob.core.windows.net/users/{PicturePath}";*/
-        
+            : $"http://soccer.somee.com/users/{PicturePath}";*/
+
         [Display(Name ="User Type")]
         public UserType UserType { get; set; }
 
-        //[Display(Name ="Login Type")]
-        //public LoginType LoginType { get; set; }
+        [Display(Name ="Login Type")]
+        public LoginType LoginType { get; set; }
 
         [Display(Name ="Favorite Team")]
         public TeamEntity Team { get; set; }
