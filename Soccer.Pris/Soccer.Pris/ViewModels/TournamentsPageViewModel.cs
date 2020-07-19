@@ -14,7 +14,7 @@ namespace Soccer.Pris.ViewModels
         private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
         private bool isRunning;
-        private List<TournamentResponse> _tournaments;
+        private List<TournamentItemViewModel> _tournaments;
         public TournamentsPageViewModel(INavigationService navigationService,IApiService apiService):base(navigationService)
         {
             _navigationService = navigationService;
@@ -23,7 +23,7 @@ namespace Soccer.Pris.ViewModels
             LoadTournamentsAsync();
         }
 
-        public List<TournamentResponse> Tournaments
+        public List<TournamentItemViewModel> Tournaments
         {
             get => _tournaments;
             set => SetProperty(ref _tournaments, value);
@@ -48,7 +48,17 @@ namespace Soccer.Pris.ViewModels
                 return;
             }
 
-            Tournaments = (List<TournamentResponse>)response.Result;
+            List<TournamentResponse> tournaments = (List<TournamentResponse>)response.Result;
+            Tournaments = tournaments.Select(t => new TournamentItemViewModel(_navigationService)
+            {
+                EndDate = t.EndDate,
+                Groups = t.Groups,
+                Id = t.Id,
+                IsActive = t.IsActive,
+                LogoPath = t.LogoPath,
+                Name = t.Name,
+                StartDate = t.StartDate
+            }).ToList();
         }
 
         
