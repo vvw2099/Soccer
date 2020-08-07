@@ -5,7 +5,9 @@
              xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Soccer.Pris.Views.GroupsPage"
-             Title="{Binding Title}">
+             IconImageSource="ic_action_vpn_key"
+             Title="{Binding Title}"
+             BackgroundColor="{StaticResource ColorBackgroud}">
     <StackLayout Padding="5">
         <Grid>
             <Grid.RowDefinitions>

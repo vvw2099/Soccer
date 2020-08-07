@@ -4,7 +4,9 @@
              xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Soccer.Pris.Views.MatchesPage"
-             Title="{Binding Title}">
+             IconImageSource="ic_action_grade"
+             Title="{Binding Title}" 
+             BackgroundColor="{StaticResource ColorBackgroud}">
     <StackLayout Padding="5">
         <CollectionView ItemsSource="{Binding Matches}"
                         ItemTemplate="{StaticResource MatchTemplate}">

@@ -2,6 +2,7 @@
 <prism:PrismApplication xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                          xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+                        
              xmlns:prism="http://prismlibrary.com"
              x:Class="Soccer.Pris.App">
   <Application.Resources>
@@ -10,7 +11,39 @@
             <!--Parameters-->
             <x:String x:Key="UrlAPI">http://soccer.somee.com/</x:String>
             <!--Colors-->
+            <Color x:Key="ColorBackgroud">#54E85D</Color>
+            <Color x:Key="ColorPrimary">#191919</Color>
+            <Color x:Key="ColorSecondary">#90FF69</Color>
+            <Color x:Key="ColorDanger">#FFFFFF</Color>
+            <Color x:Key="ColorAccent">#38006A</Color>
+            <Color x:Key="ColorFont">#191919</Color>
+            <Color x:Key="ColorFontInverse">#FFFFFF</Color>
             <!--Styles-->
+            <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorAccent}"/>
+                <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+                <Setter Property="TextColor" Value="{StaticResource ColorFontInverse}"/>
+            </Style>
+            <Style TargetType="Label">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorSecondary}"/>
+            </Style>
+
+            <Style x:Key="SecondaryButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorSecondary}"/>
+            </Style>
+            <Style x:Key="DangerButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorDanger}"/>
+                <Setter Property="TextColor" Value="{StaticResource ColorFont}"/>
+            </Style>
+            <Style TargetType="Entry">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorFontInverse}"/>
+            </Style>
+            <Style TargetType="SearchBar">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorFontInverse}"/>
+            </Style>
+            <Style TargetType="Picker">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorFontInverse}"/>
+            </Style>
             <!--Data Templates-->
             <DataTemplate x:Key="MatchTemplate">
                 <StackLayout>
@@ -58,6 +91,45 @@
                             WidthRequest="90"/>
                     </Grid>
                 </StackLayout>
+            </DataTemplate>
+
+            <DataTemplate x:Key="PositionTemplate">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="70" />
+                    </Grid.ColumnDefinitions>
+                    <RelativeLayout Grid.Column="0">
+                        <ffimageloading:CachedImage x:Name="Picture"
+                                                    Aspect="AspectFill"
+                                                    Source="{Binding UserResponse.PictureFullPath}"
+                                                    CacheDuration="50"
+                                                    Margin="5"
+                                                    RetryCount="3"
+                                                    RetryDelay="600"
+                                                    WidthRequest="50">
+                            <ffimageloading:CachedImage.Transformations>
+                                
+                             </ffimageloading:CachedImage.Transformations>
+                        </ffimageloading:CachedImage>
+                    </RelativeLayout>
+                    <Label Grid.Column="1"
+                        FontSize="Medium"
+                        Text="{Binding UserResponse.FullName}" 
+                        VerticalOptions="Center"/>
+                    <Label Grid.Column="2"
+                        FontSize="Medium"
+                        HorizontalTextAlignment="End"
+                        Text="{Binding Points}" 
+                        VerticalOptions="Center"/>
+                    <Label Grid.Column="3"
+                        FontSize="Medium"
+                        HorizontalTextAlignment="End"
+                        Text="{Binding Ranking}" 
+                        VerticalOptions="Center"/>
+                </Grid>
             </DataTemplate>
         </ResourceDictionary>
 

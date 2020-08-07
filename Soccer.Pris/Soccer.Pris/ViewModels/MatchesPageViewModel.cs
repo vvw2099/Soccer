@@ -1,6 +1,8 @@
-﻿using Prism.Commands;
+﻿using Newtonsoft.Json;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
+using Soccer.Common.Helpers;
 using Soccer.Common.Models;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,8 @@ namespace Soccer.Pris.ViewModels
         private List<MatchResponse> _matches;
         public MatchesPageViewModel(INavigationService navigationService):base(navigationService)
         {
-            Title = "Matches";
+            Title = "Open";
+            LoadMatches();
         }
 
         public List<MatchResponse> Matches { 
@@ -22,16 +25,17 @@ namespace Soccer.Pris.ViewModels
             set => SetProperty(ref _matches,value);
         }
 
-        public override void OnNavigatedTo(INavigationParameters parameters)
+        /*public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
 
             _tournament = parameters.GetValue<TournamentResponse>("tournaments");
             LoadMatches();
-        }
+        }*/
 
         private void LoadMatches()
         {
+            _tournament = JsonConvert.DeserializeObject<TournamentResponse>(Settings.Tournament);
             List<MatchResponse> matches = new List<MatchResponse>();
             foreach(GroupResponse group in _tournament.Groups)
             {

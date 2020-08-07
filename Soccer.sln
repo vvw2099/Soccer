@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soccer.Common", "Soccer.Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soccer.Web", "Soccer.Web\Soccer.Web.csproj", "{6915F390-2F8D-439C-B2C8-75D7936ABF05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soccer.Pris", "Soccer.Pris\Soccer.Pris\Soccer.Pris.csproj", "{07EC8A8B-2438-4B8D-8BA7-93B102A3E183}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soccer.Pris", "Soccer.Pris\Soccer.Pris\Soccer.Pris.csproj", "{07EC8A8B-2438-4B8D-8BA7-93B102A3E183}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soccer.Pris.Android", "Soccer.Pris\Soccer.Pris.Android\Soccer.Pris.Android.csproj", "{CFDB9100-B256-431F-9E53-FD49A53E6C3E}"
 EndProject
