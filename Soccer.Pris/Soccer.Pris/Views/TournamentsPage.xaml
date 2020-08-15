@@ -4,6 +4,7 @@
              xmlns:prism="http://prismlibrary.com"
              xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
+             
              x:Class="Soccer.Pris.Views.TournamentsPage"
              Title="{Binding Title}" 
              BackgroundColor="{StaticResource ColorBackgroud}">
@@ -56,6 +57,16 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </StackLayout>
+        <ActivityIndicator
+            AbsoluteLayout.LayoutBounds=".5,.5,.5,.5"
+            AbsoluteLayout.LayoutFlags="All"
+            BackgroundColor="{StaticResource ColorDanger}"
+            HorizontalOptions="Center"
+            Color="{StaticResource ColorFontInverse}"
+            IsVisible="{Binding IsRunning}"
+            VerticalOptions="Center"
+            
+            />
     </AbsoluteLayout>
   
 </ContentPage>

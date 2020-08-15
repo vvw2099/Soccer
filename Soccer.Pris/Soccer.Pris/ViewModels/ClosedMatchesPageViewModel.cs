@@ -4,6 +4,7 @@ using Prism.Mvvm;
 using Prism.Navigation;
 using Soccer.Common.Helpers;
 using Soccer.Common.Models;
+using Soccer.Pris.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Soccer.Pris.ViewModels
         private List<MatchResponse> _matches;
         public ClosedMatchesPageViewModel(INavigationService navigationService): base(navigationService)
         {
-            Title = "Closed";
+            Title = Languages.Closed;
             LoadMatches();
         }
 

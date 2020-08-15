@@ -3,6 +3,7 @@ using Prism.Mvvm;
 using Prism.Navigation;
 using Soccer.Common.Models;
 using Soccer.Common.Services;
+using Soccer.Pris.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Soccer.Pris.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
-        private bool isRunning;
+        private bool _isRunning;
         private List<TournamentItemViewModel> _tournaments;
         public TournamentsPageViewModel(INavigationService navigationService,IApiService apiService):base(navigationService)
         {
@@ -22,7 +23,11 @@ namespace Soccer.Pris.ViewModels
             Title = "Soccer";
             LoadTournamentsAsync();
         }
-
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set => SetProperty(ref _isRunning, value);
+        }
         public List<TournamentItemViewModel> Tournaments
         {
             get => _tournaments;
@@ -31,19 +36,29 @@ namespace Soccer.Pris.ViewModels
 
         private async void LoadTournamentsAsync()
         {
+            IsRunning = true;
             string url = App.Current.Resources["UrlAPI"].ToString();
+
+            bool connection = await _apiService.CheckConnection(url);
+            if (!connection)
+            {
+                IsRunning = false;
+                await App.Current.MainPage.DisplayAlert(Languages.Error, Languages.ConnectionError,Languages.Accept);
+                return;
+            }
+
             Response response = await _apiService.GetListAsync<TournamentResponse>(
                 url,
                 "/api",
                 "/Tournaments"
                 );
-
+            IsRunning = false;
             if (!response.IsSuccess)
             {
                 await App.Current.MainPage.DisplayAlert(
-                    "Error",
+                    Languages.Error,
                     response.Message,
-                    "Acept"
+                    Languages.Accept
                     );
                 return;
             }

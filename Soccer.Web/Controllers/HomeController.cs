@@ -14,7 +14,12 @@ namespace Soccer.Web.Controllers
         {
             return View();
         }
-
+        
+        [Route("/error/{0}")]
+        public IActionResult Error404()
+        {
+            return View();
+        }
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

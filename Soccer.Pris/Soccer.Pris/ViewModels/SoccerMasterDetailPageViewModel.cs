@@ -1,13 +1,16 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
+using Soccer.Common.Helpers;
 using Soccer.Common.Models;
 using Soccer.Common.Services;
+using Soccer.Pris.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Soccer.Pris.ViewModels
 {
@@ -34,35 +37,35 @@ namespace Soccer.Pris.ViewModels
                 {
                     Icon="tournament",
                     PageName="TournamentsPage",
-                    Title="Tournaments",
+                    Title=Languages.Tournaments,
                     IsLoginRequired=false
                 },
                 new Menu
                 {
                     Icon="prediction",
                     PageName="MyPredictionsPage",
-                    Title="Predictions",
+                    Title=Languages.MyPredictions,
                     IsLoginRequired=false
                 },
                 new Menu
                 {
                     Icon="medal",
                     PageName="MyPositionsPage",
-                    Title="My Position",
+                    Title= Languages.MyPositions,
                     IsLoginRequired=false
                 },
                 new Menu
                 {
                     Icon="user",
                     PageName="ModifyUserPage",
-                    Title="Modify User",
+                    Title=Languages.ModifyUser,
                     IsLoginRequired=false
                 },
                 new Menu
                 {
                     Icon="login",
                     PageName="LoginPage",
-                    Title="Login",
+                    Title= Languages.Login,
                     IsLoginRequired=false
                 }
             };

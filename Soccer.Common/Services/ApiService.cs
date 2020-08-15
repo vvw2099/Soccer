@@ -5,11 +5,21 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Plugin.Connectivity;
 
 namespace Soccer.Common.Services
 {
     public class ApiService : IApiService
     {
+        public async Task<bool> CheckConnection(string url)
+        {
+            if (!CrossConnectivity.Current.IsConnected)
+            {
+                return false;
+            }
+            return await CrossConnectivity.Current.IsRemoteReachable(url);
+        }
+
         public async Task<Response> GetListAsync<T>(string urlBase, string servicePrefix, string controller)
         {
             try

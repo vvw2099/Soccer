@@ -6,6 +6,7 @@ using Soccer.Common.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Soccer.Pris.Helpers;
 
 namespace Soccer.Pris.ViewModels
 {
@@ -17,7 +18,7 @@ namespace Soccer.Pris.ViewModels
         public GroupsPageViewModel(INavigationService navigationService, ITransformHelper transformHelper):base(navigationService)
         {
             _transformHelper = transformHelper;
-            Title = "Groups";
+            Title = Languages.Groups;
         }
 
         public List<Group> Groups
