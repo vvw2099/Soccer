@@ -13,18 +13,65 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Soccer.Web.Controllers
 {
-    [Authorize(Roles ="Admin")]
-    public class TournamentsController:Controller
+    [Authorize(Roles = "Admin")]
+    public class TournamentsController : Controller
     {
         private readonly DataContext _dataContext;
         private readonly IConverterHelper _converterHelper;
         private readonly ICombosHelper _combosHelper;
+        private readonly IMatchHelper _matchHelper;
 
-        public TournamentsController(DataContext dataContext,IConverterHelper converterHelper,ICombosHelper combosHelper)
+        public TournamentsController(DataContext dataContext, IConverterHelper converterHelper, 
+            ICombosHelper combosHelper,IMatchHelper matchHelper)
         {
             _dataContext = dataContext;
             _converterHelper = converterHelper;
             _combosHelper = combosHelper;
+            _matchHelper = matchHelper;
+        }
+        public async Task<IActionResult> CloseMatch(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MatchEntity matchEntity= await _dataContext.Matches
+                .Include(m => m.Group)
+                .Include(m => m.Local)
+                .Include(m => m.Visitor)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (matchEntity == null)
+            {
+                return NotFound();
+            }
+            CloseMatchViewModel model = new CloseMatchViewModel
+            {
+                Group = matchEntity.Group,
+                GroupId = matchEntity.Group.Id,
+                Local = matchEntity.Local,
+                LocalId = matchEntity.Local.Id,
+                MatchId = matchEntity.Id,
+                Visitor = matchEntity.Visitor,
+                VisitorId = matchEntity.Visitor.Id
+            };
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CloseMatch(CloseMatchViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _matchHelper.CloseMatchAsync(model.MatchId, model.GoalsLocal.Value, model.GoalsLocal.Value);
+                return RedirectToAction($"{nameof(DetailsGroup)}/{model.GroupId}");
+            }
+
+            model.Group = await _dataContext.Groups.FindAsync(model.GroupId);
+            model.Local = await _dataContext.Teams.FindAsync(model.LocalId);
+            model.Visitor = await _dataContext.Teams.FindAsync(model.VisitorId);
+
+            return View(model);
         }
 
         public async Task<IActionResult> Index()

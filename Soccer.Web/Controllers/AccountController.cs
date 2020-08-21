@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Soccer.Common.Enums;
 using Soccer.Web.Data;
 using Soccer.Web.Data.Entities;
@@ -10,7 +11,11 @@ using Soccer.Web.Helpers;
 using Soccer.Web.Models;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Soccer.Web.Controllers
@@ -21,18 +26,56 @@ namespace Soccer.Web.Controllers
         private readonly ICombosHelper _combosHelper;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
-        
+        private readonly IMailHelper _mailHelper;        
 
         public AccountController(IUserHelper userHelper, ICombosHelper combosHelper,
-            DataContext dataContext, IConfiguration configuration)
+            DataContext dataContext, IConfiguration configuration,IMailHelper mailHelper)
         {
             _userHelper = userHelper;
             _combosHelper = combosHelper;
             _dataContext = dataContext;
             _configuration = configuration;
-            
+            _mailHelper = mailHelper;
         }
+        [HttpPost]
+        public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                UserEntity user = await _userHelper.GetUserAsync(model.Username);
+                if(user!= null)
+                {
+                    Microsoft.AspNetCore.Identity.SignInResult result = await _userHelper.ValidatePasswordAsync(user, model.password);
+                    if (result.Succeeded)
+                    {
+                        Claim[] claims = new[]
+                        {
+                            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                        };
 
+                        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
+                        SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                        JwtSecurityToken token = new JwtSecurityToken(
+                            _configuration["Tokens:Issuer"],
+                            _configuration["Tokens:Audience"],
+                            claims,
+                            expires: DateTime.UtcNow.AddDays(99),
+                            signingCredentials: credentials);
+
+                        var results = new
+                        {
+                            token = new JwtSecurityTokenHandler().WriteToken(token),
+                            expiration = token.ValidTo
+                        };
+
+                        return Created(string.Empty, results);
+                    }
+                }
+            }
+
+            return BadRequest();
+        }
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Index()
         {
@@ -107,23 +150,46 @@ namespace Soccer.Web.Controllers
                     return View(model);
                 }
 
-                LoginViewModel loginViewModel = new LoginViewModel
+                var myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                var tokenLink = Url.Action("ConfirmEmail", "Account", new
                 {
-                    password = model.Password,
-                    RememberMe = false,
-                    Username = model.Username
-                };
+                    userid = user.Id,
+                    token = myToken,
 
-                var result2 = await _userHelper.LoginAsync(loginViewModel);
+                }, protocol: HttpContext.Request.Scheme);
 
-                if (result2.Succeeded)
+                var response= _mailHelper.SendMail(model.Username, "Email Confirmation", $"<h1>Email Confirmation</h1>"+
+                    $"To Allow  the user, "+
+                    $"please click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
+
+                if (response.IsSuccess)
                 {
-                    return RedirectToAction("Index","Home");
+                    ViewBag.Message = "The instruccions  to allow your user has  been sent to email.";
+                    return View(model);
                 }
-
             }
             model.Teams = _combosHelper.GetComboTeams();
             return View(model);
+        }
+        public async Task<IActionResult> ConfirmEmail(string userId,string token)
+        {
+            if(string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token)){
+                return NotFound();
+            }
+
+            UserEntity user = await _userHelper.GetUserAsync(new Guid(userId));
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            IdentityResult result = await _userHelper.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                return NotFound();
+            }
+
+            return View();
         }
         public async Task<IActionResult> ChangeUser()
         {
@@ -192,6 +258,57 @@ namespace Soccer.Web.Controllers
                     ModelState.AddModelError(string.Empty, result.Errors.FirstOrDefault().Description);
                 }
             }
+            return View(model);
+        }
+        
+        public IActionResult RecoverPasswordMVC()
+        {
+            return View();  
+        }
+        [HttpPost]
+        public async Task<IActionResult> RecoverPasswordMVC(RecoverPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                UserEntity user = await _userHelper.GetUserAsync(model.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "The email doesn't correspont to a registered user.");
+                    return View(model);
+                }
+                string myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+                string link = Url.Action(
+                    "ResetPassword",
+                    "Account",
+                    new { token = myToken }, protocol: HttpContext.Request.Scheme);
+                _mailHelper.SendMail(model.Email, "Soccer Password Reset", $"<h1>Soccer Password Reset</h1>" +
+                    $"To reset the password click in this link:</br></br>"+
+                    $"<a href = \"{link}\">Reset Password</a>");
+                ViewBag.Message= "The instructions to recover your password has been sent to email.";
+                return View();
+            }
+            return View(model);
+        }
+        public IActionResult ResetPassword(string token)
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            UserEntity user = await _userHelper.GetUserAsync(model.UserName);
+            if (user != null)
+            {
+                IdentityResult result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    ViewBag.Message = "Password reset successful.";
+                    return View();
+                }
+                ViewBag.Message = "Error while resetting the password.";
+                return View(model);
+            }
+            ViewBag.Message = "User not found.";
             return View(model);
         }
     }

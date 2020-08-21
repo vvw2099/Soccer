@@ -1,19 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Soccer.Web.Data;
 using Soccer.Web.Data.Entities;
 using Soccer.Web.Helpers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Soccer.Web.Controllers.API
 {
+
     [ApiController]
     [Route("api/[controller]")]
-    public class TournamentsController: ControllerBase
+    public class TournamentsController : ControllerBase
     {
         private readonly DataContext _context;
         private readonly IConverterHelper _converterHelper;
@@ -27,7 +25,7 @@ namespace Soccer.Web.Controllers.API
         [HttpGet]
         public async Task<IActionResult> GetTournaments()
         {
-            List<TournamentEntity> tournaments=await _context.Tournaments
+            List<TournamentEntity> tournaments = await _context.Tournaments
                 .Include(t => t.Groups)
                 .ThenInclude(g => g.GroupDetails)
                 .ThenInclude(gd => gd.Team)

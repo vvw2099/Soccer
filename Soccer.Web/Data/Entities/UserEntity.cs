@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Soccer.Common.Enums;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Soccer.Web.Data.Entities
 {
-    public class UserEntity: IdentityUser
+    public class UserEntity : IdentityUser
     {
-        [Display(Name ="Document")]
+        [Display(Name = "Document")]
         [MaxLength(20, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         public string Document { get; set; }
@@ -28,21 +26,21 @@ namespace Soccer.Web.Data.Entities
         [MaxLength(500, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string Address { get; set; }
 
-        [Display(Name ="Picture")]
+        [Display(Name = "Picture")]
         public string PicturePath { get; set; }
 
-        /*[Display(Name = "Picture")]
+        [Display(Name = "Picture")]
         public string PictureFullPath => string.IsNullOrEmpty(PicturePath)
             ? "https://SoccerWeb0.azurewebsites.net//images/noimage.png"
-            : $"http://soccer.somee.com/users/{PicturePath}";*/
+            : $"http://soccer.somee.com/users/{PicturePath}";
 
-        [Display(Name ="User Type")]
+        [Display(Name = "User Type")]
         public UserType UserType { get; set; }
 
-        [Display(Name ="Login Type")]
+        [Display(Name = "Login Type")]
         public LoginType LoginType { get; set; }
 
-        [Display(Name ="Favorite Team")]
+        [Display(Name = "Favorite Team")]
         public TeamEntity Team { get; set; }
 
         public ICollection<PredictionEntity> Predictions { get; set; }
@@ -53,7 +51,7 @@ namespace Soccer.Web.Data.Entities
         [Display(Name = "User")]
         public string FullNameWithDocument => $"{FirstName} {LastName} - {Document}";
 
-        //public int Points => Predictions == null ? 0 : Predictions.Sum(p => p.Points);
+        public int Points => Predictions == null ? 0 : Predictions.Sum(p => p.Points);
 
     }
 }
