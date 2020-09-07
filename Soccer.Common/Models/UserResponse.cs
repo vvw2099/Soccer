@@ -31,7 +31,7 @@ namespace Soccer.Common.Models
         public string FullNameWithDocument => $"{FirstName} {LastName} - {Document}";
 
         public string PictureFullPath => string.IsNullOrEmpty(PicturePath)
-            ? "https://SoccerWeb4.azurewebsites.net//images/noimage.png"
-            : LoginType == LoginType.Soccer ? $"https://SoccerWeb4.azurewebsites.net{PicturePath.Substring(1)}" : PicturePath;
+            ? "http://www.soccer.somee.com/images/noimage.png"
+            : LoginType == LoginType.Soccer ? $"http://www.soccer.somee.com{PicturePath.Replace('~','/')}" : $"http://www.soccer.somee.com{PicturePath.Replace('~', '/')}";
     }
 }

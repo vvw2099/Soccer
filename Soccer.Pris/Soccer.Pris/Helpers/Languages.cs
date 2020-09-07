@@ -19,8 +19,6 @@ namespace Soccer.Pris.Helpers
 
         public static string Culture{get;set;}
 
-
-
         public static string ChangePhotoNoSoccerUser => Resource.ChangePhotoNoSoccerUser;
 
         public static string LoginFacebook => Resource.LoginFacebook;

@@ -39,8 +39,8 @@ namespace Soccer.Web.Models
 
         [Display(Name = "Picture")]
         public string PictureFullPath => string.IsNullOrEmpty(PicturePath)
-            ? "https://SoccerWeb4.azurewebsites.net//images/noimage.png"
-            : $"https://zulusoccer.blob.core.windows.net/users/{PicturePath}";
+            ? "~/images/noimage.png"
+            : $"{PicturePath}";
 
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         [Display(Name = "Favorite Team")]

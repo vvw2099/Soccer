@@ -31,8 +31,8 @@ namespace Soccer.Web.Data.Entities
 
         [Display(Name = "Picture")]
         public string PictureFullPath => string.IsNullOrEmpty(PicturePath)
-            ? "https://SoccerWeb0.azurewebsites.net//images/noimage.png"
-            : $"http://soccer.somee.com/users/{PicturePath}";
+            ? "~/images/noimage.png"
+            : $"{PicturePath}";
 
         [Display(Name = "User Type")]
         public UserType UserType { get; set; }

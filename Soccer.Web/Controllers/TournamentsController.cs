@@ -20,14 +20,16 @@ namespace Soccer.Web.Controllers
         private readonly IConverterHelper _converterHelper;
         private readonly ICombosHelper _combosHelper;
         private readonly IMatchHelper _matchHelper;
+        private readonly IImageHelper _imageHelper;
 
         public TournamentsController(DataContext dataContext, IConverterHelper converterHelper, 
-            ICombosHelper combosHelper,IMatchHelper matchHelper)
+            ICombosHelper combosHelper,IMatchHelper matchHelper,IImageHelper imageHelper)
         {
             _dataContext = dataContext;
             _converterHelper = converterHelper;
             _combosHelper = combosHelper;
             _matchHelper = matchHelper;
+            _imageHelper = imageHelper;
         }
         public async Task<IActionResult> CloseMatch(int? id)
         {
@@ -98,7 +100,7 @@ namespace Soccer.Web.Controllers
 
                 if(model.LogoFile != null)
                 {
-                    path = $"~/images/Tournaments/{model.LogoFile}.jpg";
+                    path = await _imageHelper.UploadImageAsync(model.LogoFile,"Tournaments");
                 }
 
                 TournamentEntity tournament = _converterHelper.ToTournamentEntity(model, path, true);
@@ -127,7 +129,7 @@ namespace Soccer.Web.Controllers
             return View(model);
         }
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(TournamentViewModel model)
         {
             if (ModelState.IsValid)
@@ -136,16 +138,16 @@ namespace Soccer.Web.Controllers
 
                 if(model.LogoFile != null)
                 {
-                    path = model.LogoFile.ToString();
+                    path = await _imageHelper.UploadImageAsync(model.LogoFile, "Tournaments");
                 }
 
                 TournamentEntity tournamentEntity = _converterHelper.ToTournamentEntity(model, path, false);
                 _dataContext.Update(tournamentEntity);
                 await _dataContext.SaveChangesAsync();
 
-                RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
             }
-            return View();
+            return View(model);
         }
 
         public async Task<IActionResult> Delete(int? id)

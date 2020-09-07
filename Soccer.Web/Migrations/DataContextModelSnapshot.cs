@@ -312,6 +312,8 @@ namespace Soccer.Web.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
 
+                    b.Property<int>("LoginType");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256);
 

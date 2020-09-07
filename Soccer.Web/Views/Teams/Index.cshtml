@@ -8,7 +8,7 @@
 <br />
 
 <p>
-    <a asp-action="Create" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Create New</a>
 </p>
 
 <div class="row">
@@ -21,6 +21,9 @@
                 <table class="table table-hover table-responsive table-striped" id="MyTable">
                     <thead>
                         <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Id)
+                            </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.Name)
                             </th>
@@ -35,10 +38,13 @@
                         {
                             <tr>
                                 <td>
+                                    @Html.DisplayFor(modelItem => item.Id)
+                                </td>
+                                <td>
                                     @Html.DisplayFor(modelItem => item.Name)
                                 </td>
                                 <td>
-                                    <img src="@item.LogoFullPath" style="width:100px;height:100px;max-width: 100%; height: auto;" />
+                                    <img src="@Url.Content(item.LogoFullPath)" style="width:100px;height:100px;max-width: 100%; height: auto;" />
                                 </td>
                                 <td>
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning"><i class="glyphicon glyphicon-pencil"></i></a>
@@ -55,7 +61,6 @@
 </div>
 
 <partial name="_DeleteDialog" />
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>

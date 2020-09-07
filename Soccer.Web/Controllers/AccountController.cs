@@ -10,11 +10,9 @@ using Soccer.Web.Data.Entities;
 using Soccer.Web.Helpers;
 using Soccer.Web.Models;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,16 +24,23 @@ namespace Soccer.Web.Controllers
         private readonly ICombosHelper _combosHelper;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
-        private readonly IMailHelper _mailHelper;        
+        private readonly IMailHelper _mailHelper;
+        private readonly IImageHelper _imageHelper;
 
-        public AccountController(IUserHelper userHelper, ICombosHelper combosHelper,
-            DataContext dataContext, IConfiguration configuration,IMailHelper mailHelper)
+        public AccountController(IUserHelper userHelper,
+            IImageHelper imageHelper,
+            ICombosHelper combosHelper,
+            DataContext dataContext, 
+            IConfiguration configuration, 
+            IMailHelper mailHelper
+            )
         {
             _userHelper = userHelper;
             _combosHelper = combosHelper;
             _dataContext = dataContext;
             _configuration = configuration;
             _mailHelper = mailHelper;
+            _imageHelper = imageHelper;
         }
         [HttpPost]
         public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
@@ -43,7 +48,7 @@ namespace Soccer.Web.Controllers
             if (ModelState.IsValid)
             {
                 UserEntity user = await _userHelper.GetUserAsync(model.Username);
-                if(user!= null)
+                if (user != null)
                 {
                     Microsoft.AspNetCore.Identity.SignInResult result = await _userHelper.ValidatePasswordAsync(user, model.password);
                     if (result.Succeeded)
@@ -76,7 +81,7 @@ namespace Soccer.Web.Controllers
 
             return BadRequest();
         }
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _dataContext.Users
@@ -92,7 +97,7 @@ namespace Soccer.Web.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index","Home");
+                return RedirectToAction("Index", "Home");
             }
             return View();
         }
@@ -109,7 +114,7 @@ namespace Soccer.Web.Controllers
                         return Redirect(Request.Query["ReturnUrl"].First());
                     }
 
-                    return RedirectToAction("Index","Home");
+                    return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError(string.Empty, "Email or password incorrect.");
             }
@@ -118,7 +123,7 @@ namespace Soccer.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await _userHelper.LogoutAsync();
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
         public IActionResult Register()
         {
@@ -138,11 +143,15 @@ namespace Soccer.Web.Controllers
             {
                 string path = string.Empty;
 
-                if(model.PictureFile != null)
+                if (model.PictureFile != null)
                 {
-                    path = ""; //await _imageHelper.UploadImageAsync(model.PictureFile, "Users");
+                    try
+                    {
+                        path = await _imageHelper.UploadImageAsync(model.PictureFile, "Users");
+                    }
+                    catch { }
                 }
-                UserEntity user = await _userHelper.AddUserAsync(model, path,UserType.User);
+                UserEntity user = await _userHelper.AddUserAsync(model, path, UserType.User);
                 if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "This email is already used.");
@@ -158,8 +167,8 @@ namespace Soccer.Web.Controllers
 
                 }, protocol: HttpContext.Request.Scheme);
 
-                var response= _mailHelper.SendMail(model.Username, "Email Confirmation", $"<h1>Email Confirmation</h1>"+
-                    $"To Allow  the user, "+
+                var response = _mailHelper.SendMail(model.Username, "Email Confirmation", $"<h1>Email Confirmation</h1>" +
+                    $"To Allow  the user, " +
                     $"please click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
 
                 if (response.IsSuccess)
@@ -171,9 +180,10 @@ namespace Soccer.Web.Controllers
             model.Teams = _combosHelper.GetComboTeams();
             return View(model);
         }
-        public async Task<IActionResult> ConfirmEmail(string userId,string token)
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
-            if(string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token)){
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
                 return NotFound();
             }
 
@@ -216,9 +226,9 @@ namespace Soccer.Web.Controllers
             {
                 string path = model.PicturePath;
 
-                if(model.PictureFile != null)
+                if (model.PictureFile != null)
                 {
-                    path = "";
+                    path = await _imageHelper.UploadImageAsync(model.PictureFile,"Users");
                 }
 
                 UserEntity user = await _userHelper.GetUserAsync(User.Identity.Name);
@@ -260,10 +270,10 @@ namespace Soccer.Web.Controllers
             }
             return View(model);
         }
-        
+
         public IActionResult RecoverPasswordMVC()
         {
-            return View();  
+            return View();
         }
         [HttpPost]
         public async Task<IActionResult> RecoverPasswordMVC(RecoverPasswordViewModel model)
@@ -282,9 +292,9 @@ namespace Soccer.Web.Controllers
                     "Account",
                     new { token = myToken }, protocol: HttpContext.Request.Scheme);
                 _mailHelper.SendMail(model.Email, "Soccer Password Reset", $"<h1>Soccer Password Reset</h1>" +
-                    $"To reset the password click in this link:</br></br>"+
+                    $"To reset the password click in this link:</br></br>" +
                     $"<a href = \"{link}\">Reset Password</a>");
-                ViewBag.Message= "The instructions to recover your password has been sent to email.";
+                ViewBag.Message = "The instructions to recover your password has been sent to email.";
                 return View();
             }
             return View(model);

@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using Newtonsoft.Json;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
 using Soccer.Common.Helpers;
@@ -18,17 +19,23 @@ namespace Soccer.Pris.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
+        private UserResponse _user;
         public SoccerMasterDetailPageViewModel(INavigationService navigationService,IApiService apiService):base(navigationService)
         {
            
             _navigationService = navigationService;
             _apiService = apiService;
+            LoadUser();
             LoadMenus();
         }
         
         public ObservableCollection<MenuItemViewModel> Menus { get; set; }
-        
-        
+        public UserResponse User
+        {
+            get => _user;
+            set => SetProperty(ref _user, value);
+        }
+
         private void LoadMenus()
         {
             List<Menu> menus = new List<Menu>
@@ -65,8 +72,8 @@ namespace Soccer.Pris.ViewModels
                 {
                     Icon="login",
                     PageName="LoginPage",
-                    Title= Languages.Login,
-                    IsLoginRequired=false
+                    Title= Settings.IsLogin? Languages.Logout:Languages.Login
+                    
                 }
             };
 
@@ -78,6 +85,13 @@ namespace Soccer.Pris.ViewModels
                     Title = m.Title,
                     IsLoginRequired = m.IsLoginRequired
                 }).ToList());
+        }
+        private void LoadUser()
+        {
+            if (Settings.IsLogin)
+            {
+                User = JsonConvert.DeserializeObject<UserResponse>(Settings.User);
+            }
         }
     }
 }

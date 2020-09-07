@@ -20,7 +20,7 @@
             @Html.DisplayNameFor(model => model.LogoPath)
         </dt>
         <dd>
-            <img src="@Model.LogoFullPath" style="width:100px;height:200px;max-width:200%; height: auto;" />
+            <img src="@Url.Content(Model.LogoFullPath)" style="width:100px;height:200px;max-width:200%; height: auto;" />
         </dd>
     </dl>
 </div>

@@ -18,11 +18,14 @@ namespace Soccer.Web.Controllers
     {
         private readonly DataContext _context;
         private readonly IConverterHelper _converterHelper;
+        private readonly IImageHelper _imageHelper;
 
-        public TeamsController(DataContext context, IConverterHelper converterHelper)
+        public TeamsController(DataContext context, IConverterHelper converterHelper,
+            IImageHelper imageHelper)
         {
             _context = context;
             _converterHelper = converterHelper;
+            _imageHelper = imageHelper;
         }
 
 
@@ -65,7 +68,7 @@ namespace Soccer.Web.Controllers
 
                 if (teamViewModel.LogoFile != null)
                 {
-                    path = teamViewModel.LogoFile.ToString();
+                    path = await _imageHelper.UploadImageAsync(teamViewModel.LogoFile,"Teams");
                 }
 
                 TeamEntity teamEntity = _converterHelper.ToTeamEntity(teamViewModel, path, true);
@@ -127,7 +130,7 @@ namespace Soccer.Web.Controllers
 
                 if (teamViewModel.LogoFile != null)
                 {
-                    path = teamViewModel.LogoFile.ToString();
+                    path = await _imageHelper.UploadImageAsync(teamViewModel.LogoFile,"Teams");
                 }
 
                 TeamEntity teamEntity = _converterHelper.ToTeamEntity(teamViewModel, path, false);

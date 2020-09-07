@@ -39,41 +39,49 @@ namespace Soccer.Pris.ViewModels
             IsRunning = true;
             string url = App.Current.Resources["UrlAPI"].ToString();
 
-            bool connection = await _apiService.CheckConnection(url);
-            if (!connection)
+            
+            if (!_apiService.CheckConnection())
             {
                 IsRunning = false;
                 await App.Current.MainPage.DisplayAlert(Languages.Error, Languages.ConnectionError,Languages.Accept);
                 return;
             }
-
-            Response response = await _apiService.GetListAsync<TournamentResponse>(
+            else
+            {
+                Response response = await _apiService.GetListAsync<TournamentResponse>(
                 url,
                 "/api",
                 "/Tournaments"
                 );
-            IsRunning = false;
-            if (!response.IsSuccess)
-            {
-                await App.Current.MainPage.DisplayAlert(
-                    Languages.Error,
-                    response.Message,
-                    Languages.Accept
-                    );
-                return;
+
+                IsRunning = false;
+
+                if (!response.IsSuccess)
+                {
+                    await App.Current.MainPage.DisplayAlert(
+                        Languages.Error,
+                        response.Message,
+                        Languages.Accept
+                        );
+                    return;
+                }
+
+                List<TournamentResponse> tournaments = (List<TournamentResponse>)response.Result;
+                Tournaments = tournaments.Select(t => new TournamentItemViewModel(_navigationService)
+                {
+                    EndDate = t.EndDate,
+                    Groups = t.Groups,
+                    Id = t.Id,
+                    IsActive = t.IsActive,
+                    LogoPath = t.LogoPath,
+                    Name = t.Name,
+                    StartDate = t.StartDate
+                }).ToList();
+
             }
 
-            List<TournamentResponse> tournaments = (List<TournamentResponse>)response.Result;
-            Tournaments = tournaments.Select(t => new TournamentItemViewModel(_navigationService)
-            {
-                EndDate = t.EndDate,
-                Groups = t.Groups,
-                Id = t.Id,
-                IsActive = t.IsActive,
-                LogoPath = t.LogoPath,
-                Name = t.Name,
-                StartDate = t.StartDate
-            }).ToList();
+             
+            
         }
 
         

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 
 namespace Soccer.Web.Data.Entities
 {
@@ -18,7 +19,7 @@ namespace Soccer.Web.Data.Entities
 
         [Display(Name = "Logo")]
         public string LogoFullPath => string.IsNullOrEmpty(LogoPath)
-            ? "https://SoccerWeb4.azurewebsites.net//images/noimage.png"
-            : $"http://soccer.somee.com/Teams/{LogoPath}";
+            ? "~/images/noimage.png" 
+            : $"{LogoPath}";
     }
 }

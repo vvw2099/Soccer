@@ -25,9 +25,9 @@ namespace Soccer.Common.Helpers
             get => AppSettings.GetValueOrDefault(_token, _stringDefault);
             set => AppSettings.AddOrUpdateValue(_token, value);
         }
-        public static string IsLogin
+        public static bool IsLogin
         {
-            get => AppSettings.GetValueOrDefault(_isLogin, _stringDefault);
+            get => AppSettings.GetValueOrDefault(_isLogin, _boolDefault);
             set => AppSettings.AddOrUpdateValue(_isLogin, value);
         }
         public static string Tournament

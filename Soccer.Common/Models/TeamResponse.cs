@@ -9,7 +9,7 @@
         public string LogoPath { get; set; }
 
         public string LogoFullPath => string.IsNullOrEmpty(LogoPath)
-            ? "https://SoccerWeb0.azurewebsites.net//images/noimage.png"
-            : $"https://zulusoccer.blob.core.windows.net/teams/{LogoPath}";
+            ? "http://www.soccer.somee.com/images/noimage.png"
+            : $"http://www.soccer.somee.com{LogoPath.Replace('~', '/')}";
     }
 }
