@@ -60,7 +60,7 @@ namespace Soccer.Web.Controllers.API
             return Ok(list);
         }
 
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetPositionsByTournament([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -100,7 +100,7 @@ namespace Soccer.Web.Controllers.API
                         }
                         else
                         {
-                            positionResponse.Points = predictionEntity.Points;
+                            positionResponse.Points += predictionEntity.Points;
                         }
                     }
                 }

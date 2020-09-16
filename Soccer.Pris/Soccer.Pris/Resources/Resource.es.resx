@@ -193,7 +193,7 @@
     <value>Debe escribir una contraseña.</value>
   </data>
   <data name="Register" xml:space="preserve">
-    <value>&amp;Registrar...</value>
+    <value>Registrar...</value>
   </data>
   <data name="LoginError" xml:space="preserve">
     <value>Usuario o contraseña incorrecta</value>

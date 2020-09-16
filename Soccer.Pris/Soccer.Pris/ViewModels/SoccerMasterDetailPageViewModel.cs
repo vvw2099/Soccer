@@ -6,6 +6,7 @@ using Soccer.Common.Helpers;
 using Soccer.Common.Models;
 using Soccer.Common.Services;
 using Soccer.Pris.Helpers;
+using Soccer.Pris.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,17 +20,29 @@ namespace Soccer.Pris.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
+        private static SoccerMasterDetailPageViewModel _instance;
         private UserResponse _user;
+        private DelegateCommand _modifyUserCommand;
         public SoccerMasterDetailPageViewModel(INavigationService navigationService,IApiService apiService):base(navigationService)
         {
-           
+            _instance = this;
             _navigationService = navigationService;
             _apiService = apiService;
             LoadUser();
             LoadMenus();
         }
         
+        public DelegateCommand ModifyUserCommand=> _modifyUserCommand??(_modifyUserCommand= new DelegateCommand(ModifyUserAsync));
         public ObservableCollection<MenuItemViewModel> Menus { get; set; }
+        private async void ModifyUserAsync()
+        {
+            await _navigationService.NavigateAsync($"/SoccerMasterDetailPage/NavigationPage/{nameof(ModifyUserPage)}");
+        }
+        public static SoccerMasterDetailPageViewModel GetInstance()
+        {
+            return _instance;
+        }
+        
         public UserResponse User
         {
             get => _user;
@@ -45,28 +58,28 @@ namespace Soccer.Pris.ViewModels
                     Icon="tournament",
                     PageName="TournamentsPage",
                     Title=Languages.Tournaments,
-                    IsLoginRequired=false
+                    
                 },
                 new Menu
                 {
                     Icon="prediction",
                     PageName="MyPredictionsPage",
                     Title=Languages.MyPredictions,
-                    IsLoginRequired=false
+                    IsLoginRequired=true
                 },
                 new Menu
                 {
                     Icon="medal",
                     PageName="MyPositionsPage",
                     Title= Languages.MyPositions,
-                    IsLoginRequired=false
+                    IsLoginRequired=true
                 },
                 new Menu
                 {
                     Icon="user",
                     PageName="ModifyUserPage",
                     Title=Languages.ModifyUser,
-                    IsLoginRequired=false
+                    IsLoginRequired=true
                 },
                 new Menu
                 {
@@ -92,6 +105,28 @@ namespace Soccer.Pris.ViewModels
             {
                 User = JsonConvert.DeserializeObject<UserResponse>(Settings.User);
             }
+        }
+        public async void ReloadUser()
+        {
+            string url = App.Current.Resources["UrlAPI"].ToString();
+            if (!_apiService.CheckConnection())
+            {
+                return;
+            }
+
+            UserResponse user = JsonConvert.DeserializeObject<UserResponse>(Settings.User);
+            TokenResponse token = JsonConvert.DeserializeObject<TokenResponse>(Settings.Token);
+
+            EmailRequest emailRequest = new EmailRequest
+            {
+                CultureInfo = Languages.Culture,
+                Email = user.Email
+            };
+
+            Response response = await _apiService.GetUserByEmail(url, "api", "/Account/GetUserByEmail", "bearer", token.Token, emailRequest);
+            UserResponse userResponse = (UserResponse)response.Result;
+            Settings.User = JsonConvert.SerializeObject(userResponse);
+            LoadUser();
         }
     }
 }

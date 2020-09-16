@@ -15,7 +15,7 @@ namespace Soccer.Pris.ViewModels
         {
             base.OnNavigatedTo(parameters);
 
-            _tournament = parameters.GetValue<TournamentResponse>("tournaments");
+            _tournament = parameters.GetValue<TournamentResponse>("tournament");
             Title = _tournament.Name;
         }
     }

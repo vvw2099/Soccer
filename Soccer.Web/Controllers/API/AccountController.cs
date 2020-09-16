@@ -56,7 +56,7 @@ namespace Soccer.Web.Controllers.API
             Resource.Culture = cultureInfo;
 
             UserEntity user = await _userHelper.GetUserAsync(request.Email);
-            if (user == null)
+            if (user != null)
             {
                 return BadRequest(new Response
                 {
@@ -122,7 +122,7 @@ namespace Soccer.Web.Controllers.API
                 });
             }
 
-            CultureInfo cultureInfo = new CultureInfo(request.Email);
+            CultureInfo cultureInfo = new CultureInfo(request.CultureInfo);
             Resource.Culture = cultureInfo;
 
             UserEntity user = await _userHelper.GetUserAsync(request.Email);

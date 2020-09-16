@@ -124,7 +124,6 @@ namespace Soccer.Pris.ViewModels
         }
         private async void RegisterAsync()
         {
-
             await _navigationService.NavigateAsync(nameof(RegisterPage));
         }
 

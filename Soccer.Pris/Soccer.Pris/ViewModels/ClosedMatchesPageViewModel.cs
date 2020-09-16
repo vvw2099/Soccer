@@ -18,7 +18,7 @@ namespace Soccer.Pris.ViewModels
         public ClosedMatchesPageViewModel(INavigationService navigationService): base(navigationService)
         {
             Title = Languages.Closed;
-            LoadMatches();
+            
         }
 
         public List<MatchResponse> Matches
@@ -27,17 +27,17 @@ namespace Soccer.Pris.ViewModels
             set => SetProperty(ref _matches, value);
         }
 
-        /*public override void OnNavigatedTo(INavigationParameters parameters)
+        public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
 
-            _tournament = parameters.GetValue<TournamentResponse>("tournaments");
+            _tournament = parameters.GetValue<TournamentResponse>("tournament");
             LoadMatches();
-        }*/
+        }
 
         private void LoadMatches()
         {
-            _tournament = JsonConvert.DeserializeObject<TournamentResponse>(Settings.Tournament);
+           
             List<MatchResponse> matches = new List<MatchResponse>();
             foreach(GroupResponse group in _tournament.Groups)
             {

@@ -23,26 +23,28 @@ namespace Soccer.Pris.ViewModels
 
         public DelegateCommand SelectTournamentCommand => _selectTournamentCommand ??
             (_selectTournamentCommand = new DelegateCommand(SelectTournamentAsync));
-        public DelegateCommand selectTournament2Command => _selectTournament2Command ??
+        public DelegateCommand SelectTournament2Command => _selectTournament2Command ??
             (_selectTournament2Command = new DelegateCommand(SelectTournamentForPredictionAsync));
 
         private async void SelectTournamentForPredictionAsync()
         {
-            var parameters = new NavigationParameters
-            {
-                {"tournaments",this }
-            };
 
-            await _navigationService.NavigateAsync(nameof(TournamentsPageViewModel),parameters);
+            NavigationParameters parameters = new NavigationParameters
+            {
+                {"tournament",this }
+            };
+            
+
+            await _navigationService.NavigateAsync(nameof(PredictionsTabbedPage),parameters);
         }
 
         private async void SelectTournamentAsync()
         {
             var parameters = new NavigationParameters
             {
-                {"tournaments",this }
+                {"tournament",this }
             };
-            Settings.Tournament = JsonConvert.SerializeObject(this);
+            //Settings.Tournament = JsonConvert.SerializeObject(this);
             await _navigationService.NavigateAsync(nameof(TournamentTabbedPage), parameters);
         }
     }

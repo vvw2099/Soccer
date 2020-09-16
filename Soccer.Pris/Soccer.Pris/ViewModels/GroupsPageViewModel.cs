@@ -30,7 +30,7 @@ namespace Soccer.Pris.ViewModels
         public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
-            _tournament = parameters.GetValue<TournamentResponse>("tournaments");
+            _tournament = parameters.GetValue<TournamentResponse>("tournament");
             Groups = _transformHelper.ToGroups(_tournament.Groups);
         }
     }

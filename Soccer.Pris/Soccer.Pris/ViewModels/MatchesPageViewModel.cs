@@ -18,7 +18,7 @@ namespace Soccer.Pris.ViewModels
         public MatchesPageViewModel(INavigationService navigationService):base(navigationService)
         {
             Title = Languages.Open;
-            LoadMatches();
+            
         }
 
         public List<MatchResponse> Matches { 
@@ -26,13 +26,13 @@ namespace Soccer.Pris.ViewModels
             set => SetProperty(ref _matches,value);
         }
 
-        /*public override void OnNavigatedTo(INavigationParameters parameters)
+        public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
 
-            _tournament = parameters.GetValue<TournamentResponse>("tournaments");
+            _tournament = parameters.GetValue<TournamentResponse>("tournament");
             LoadMatches();
-        }*/
+        }
 
         private void LoadMatches()
         {

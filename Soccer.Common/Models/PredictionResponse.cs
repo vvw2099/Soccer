@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Soccer.Common.Models
+﻿namespace Soccer.Common.Models
 {
     public class PredictionResponse
     {

@@ -60,7 +60,7 @@ namespace Soccer.Pris.ViewModels
                 CultureInfo = Languages.Culture
             };
 
-            string url = App.Current.Resources["UrlApi"].ToString();
+            string url = App.Current.Resources["UrlAPI"].ToString();
             Response response = await _apiService.RecoverPasswordAsync(url, "/api", "/Account/RecoverPassword", request);
 
             IsRunning = false;

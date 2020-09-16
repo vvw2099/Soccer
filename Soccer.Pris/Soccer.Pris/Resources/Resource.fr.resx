@@ -193,7 +193,7 @@
     <value>Vous devez entrer un mot de passe.</value>
   </data>
   <data name="Register" xml:space="preserve">
-    <value>&amp;Inscrire dans la base de registres...</value>
+    <value>Inscrire dans la base de registres...</value>
   </data>
   <data name="LoginError" xml:space="preserve">
     <value>Utilisateur ou mot de passe erroné !</value>
